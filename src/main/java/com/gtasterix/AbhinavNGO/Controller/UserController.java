@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/api/user")
 @RestController
 public class UserController {
@@ -31,7 +33,32 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorReact);
         }
     }
-    @GetMapping("/{getbyid}")
-    public ResponseEntity<React> getbyId()
+    @GetMapping("/getAll")
+    public ResponseEntity<React> getbyAll(){
+        try {
+            List<userDTO> getuser=userService.getAlluser();
+            React react=new React("User getall Successfully",getuser,false);
+            return ResponseEntity.status(HttpStatus.CREATED).body(react);
+
+        }
+        catch(Exception e){
+            React errorreact = new React("Error retrieving user", e.getMessage(), true);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorreact);
+
+        }
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<React> getbyid(@RequestParam Integer id){
+        try{
+            userDTO us=userService.getbyid(id);
+            React react=new React("user get by id",us,false);
+        return ResponseEntity.status(HttpStatus.CREATED).body(react);
+        }
+        catch(Exception e){
+            React errorreact=new React("error retriving userid",e.getMessage(),true);
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorreact);
+        }
+    }
 
 }

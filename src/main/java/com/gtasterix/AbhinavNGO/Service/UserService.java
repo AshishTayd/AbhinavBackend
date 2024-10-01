@@ -6,8 +6,12 @@ import com.gtasterix.AbhinavNGO.model.User;
 import com.gtasterix.AbhinavNGO.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -39,4 +43,19 @@ private boolean validateEmail(String email){
             throw new Exception("User not created");
         }
     }
-}
+    public List<userDTO> getAlluser()
+    {
+        return userRepository.findAll().stream().
+                map(UserMapper::toDTO).
+                collect(Collectors.toUnmodifiableList());
+
+    }
+
+    public userDTO getbyid(Integer id) throws RuntimeException {
+        User use = userRepository.findById(id).orElse(null);
+        if (use != null) {
+            return UserMapper.toDTO(use);
+        } else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
+    }}
