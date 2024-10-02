@@ -4,6 +4,7 @@ import com.gtasterix.AbhinavNGO.DTO.userDTO;
 import com.gtasterix.AbhinavNGO.mapper.UserMapper;
 import com.gtasterix.AbhinavNGO.model.User;
 import com.gtasterix.AbhinavNGO.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+
     @Autowired
     private  UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     private static final String MOBILE_REGEX = "^[6-9][0-9]{9}$";
@@ -36,9 +41,13 @@ private boolean validateEmail(String email){
 
     public userDTO addUser(userDTO userDTO) throws Exception {
         if(validateMobileNumber(userDTO.getMobileno()) && validateEmail(userDTO.getEmail()) ){
-            User user=UserMapper.toEntity(userDTO);
+//            User user=UserMapper.toEntity(userDTO);
+//            userRepository.save(user);
+//            return UserMapper.toDTO(user);
+
+            User user= modelMapper.map(userDTO,User.class);
             userRepository.save(user);
-            return UserMapper.toDTO(user);
+            return modelMapper.map(user,userDTO.class);
         } else {
             throw new Exception("User not created");
         }
